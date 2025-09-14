@@ -68,7 +68,7 @@
       <h1>Calculá tu precio final</h1>
     </div>
 
-    <label>Precio Amazon (USD)</label>
+    <label>Precio (USD)</label>
     <input id="price" type="number" inputmode="decimal" step="0.01" placeholder="ej: 109.99" />
 
     <label>Peso (kg)</label>
@@ -125,10 +125,7 @@
       out.style.display = 'block';
       out.innerHTML = `
         <span class="muted">Precio con impuestos (USD): ${fm(r.priceWithTax)}</span>
-        <span class="final">Precio final: USD ${fm(r.finalUSD)}</span>
-        <div style="margin-top:6px;color:#6b7280;font-size:12px;">
-          Detalle: margen ${(r.margin*100).toFixed(0)}% · fijo $${r.fijo}
-        </div>`;
+        <span class="final">Precio final: USD ${fm(r.finalUSD)}</span>;
     }
   </script>
 </body>
