@@ -105,7 +105,7 @@
 
       const subtotal = priceWithTax * (1 + margin);
       const finalUSD = +(subtotal + fijo).toFixed(2);
-      return { finalUSD, priceWithTax, margin, fijo };
+      return { finalUSD, priceWithTax };
     }
 
     function fm(n){ return Number(n).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}); }
@@ -116,18 +116,18 @@
       const out = document.getElementById('out');
 
       if (isNaN(p) || isNaN(w)) {
-  out.style.display = 'block';
-  out.textContent = 'Ingresá números válidos.';
-  return;
-}
+        out.style.display = 'block';
+        out.textContent = 'Ingresá números válidos.';
+        return;
+      }
 
-const r = calc(p, w);
-out.style.display = 'block';
-out.innerHTML = `
-  <span class="muted">Precio con impuestos (USD): ${fm(r.priceWithTax)}</span>
-  <span class="final">Precio final: USD ${fm(r.finalUSD)}</span>
-`;
-
+      const r = calc(p, w);
+      out.style.display = 'block';
+      out.innerHTML = `
+        <span class="muted">Precio con impuestos (USD): ${fm(r.priceWithTax)}</span>
+        <span class="final">Precio final: USD ${fm(r.finalUSD)}</span>
+      `;
+    }
   </script>
 </body>
 </html>
