@@ -115,18 +115,19 @@
       const w = parseFloat(document.getElementById('weight').value);
       const out = document.getElementById('out');
 
-      if(isNaN(p) || isNaN(w)){
-        out.style.display = 'block';
-        out.textContent = 'Ingresá números válidos.';
-        return;
-      }
+      if (isNaN(p) || isNaN(w)) {
+  out.style.display = 'block';
+  out.textContent = 'Ingresá números válidos.';
+  return;
+}
 
-      const r = calc(p, w);
-      out.style.display = 'block';
-      out.innerHTML = `
-        <span class="muted">Precio con impuestos (USD): ${fm(r.priceWithTax)}</span>
-        <span class="final">Precio final: USD ${fm(r.finalUSD)}</span>;
-    }
+const r = calc(p, w);
+out.style.display = 'block';
+out.innerHTML = `
+  <span class="muted">Precio con impuestos (USD): ${fm(r.priceWithTax)}</span>
+  <span class="final">Precio final: USD ${fm(r.finalUSD)}</span>
+`;
+
   </script>
 </body>
 </html>
