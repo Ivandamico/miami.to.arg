@@ -1,133 +1,148 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>miami.to.arg · Calculadora</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>miami.to.arg - Calculadora</title>
   <style>
-    * { box-sizing: border-box; }
     body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ff9ec4, #7cd6f9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg,#ff9ac6 0%,#7bd7ff 100%);
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:#111;
-      padding: clamp(12px,4vw,24px);
     }
-    .card {
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      max-width: 350px;
       width: 100%;
-      max-width: 520px;
-      background: #fff;
-      border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 14px 34px rgba(0,0,0,.14);
     }
-    .brand { display:flex; align-items:baseline; gap:10px; margin-bottom:10px; }
-    .pill { background:#111; color:#fff; padding:5px 12px; border-radius:999px; font-weight:700; font-size:12px; letter-spacing:.3px; }
-    h1 { font-size: 18px; margin: 0; font-weight: 700; }
-    label { display:block; font-weight:600; margin: 14px 0 6px; font-size: 14px; }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #333;
+    }
     input {
-      width: 100%;
-      padding: 14px 12px;
-      border: 1px solid #e6e6e6;
-      border-radius: 12px;
-      font-size: 16px;
-      outline: none;
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      text-align: center;
     }
-    input:focus { border-color:#9ccff7; box-shadow: 0 0 0 3px rgba(124,192,245,.25); }
     button {
-      width: 100%;
-      margin-top: 16px;
-      padding: 14px;
-      border: 0;
-      border-radius: 14px;
-      background: #111;
-      color: #fff;
-      font-weight: 800;
-      font-size: 16px;
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
+      margin-top: 10px;
     }
-    .result {
-      margin-top: 14px;
-      padding: 14px;
-      background: #f6f7f9;
-      border-radius: 12px;
-      line-height: 1.45;
+    button:hover {
+      background: #555;
     }
-    .result .muted { color:#6b7280; font-size: 12px; display:block; margin-bottom: 6px; }
-    .result .final { font-size: 18px; font-weight: 800; }
-    .foot { margin-top: 10px; color:#6b7280; font-size: 12px; text-align: center; }
+    .output {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    .muted {
+      font-size: 14px;
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+    }
+    .final {
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+    }
+    small {
+      display: block;
+      margin-top: 12px;
+      font-size: 12px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="brand">
-      <span class="pill">miami.to.arg</span>
-      <h1>Calculá tu precio final</h1>
-    </div>
-
-    <label>Precio (USD)</label>
-    <input id="price" type="number" inputmode="decimal" step="0.01" placeholder="ej: 109.99" />
-
-    <label>Peso (kg)</label>
-    <input id="weight" type="number" inputmode="decimal" step="0.01" placeholder="ej: 0.80" />
-
-    <button onclick="run()">Calcular</button>
-
-    <div id="out" class="result" style="display:none"></div>
-    <div class="foot">
-      Los precios se calculan sobre el total con impuestos (7%).<br/>
-      El precio final depende del precio y de si el pedido supera 1&nbsp;kg.
-    </div>
+  <div class="container">
+    <h1>miami.to.arg<br>Calculá tu precio final</h1>
+    <input type="number" id="price" placeholder="Precio (USD)">
+    <input type="number" id="weight" placeholder="Peso (gramos)">
+    <button onclick="calculate()">Calcular</button>
+    <div id="output" class="output" style="display:none;"></div>
+    <small>Los precios se calculan sobre el precio total con 7% de impuestos.  
+    El margen depende del precio y si el pedido supera 1 kg.</small>
   </div>
 
   <script>
-    const TAX = 0.07;
-
-    function calc(price, weight){
-      const priceWithTax = price * (1 + TAX);
-
-      let margin = 0;
-      let fijo = 0;
-
-      if (price < 50) {
-        margin = (weight <= 1) ? 0.30 : 0.60;
-        fijo = 10;
-      } else if (price <= 200) {
-        margin = (weight <= 1) ? 0.20 : 0.50;
-        fijo = 10;
-      } else {
-        margin = (weight <= 1) ? 0.15 : 0.30;
-        fijo = 0;
-      }
-
-      const subtotal = priceWithTax * (1 + margin);
-      const finalUSD = +(subtotal + fijo).toFixed(2);
-      return { finalUSD, priceWithTax };
+    function fm(x) {
+      return x.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
-    function fm(n){ return Number(n).toLocaleString('en-US',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+    function calc(price, grams) {
+      const weightKg = grams / 1000;
+      const priceWithTax = price * 1.07;
+      let finalUSD = 0;
 
-    function run(){
+      if (price < 200) {
+        if (price < 50) {
+          if (weightKg < 1) {
+            finalUSD = priceWithTax * 1.3;   // +30%
+          } else {
+            finalUSD = priceWithTax * 1.6;   // +60%
+          }
+        } else {
+          if (weightKg < 1) {
+            finalUSD = priceWithTax * 1.2;   // +20%
+          } else {
+            finalUSD = priceWithTax * 1.5;   // +50%
+          }
+        }
+      } else {
+        if (weightKg < 1) {
+          finalUSD = priceWithTax * 1.15;   // +15%
+        } else {
+          finalUSD = priceWithTax * 1.3;    // +30%
+        }
+      }
+
+      return {priceWithTax, finalUSD};
+    }
+
+    function calculate() {
       const p = parseFloat(document.getElementById('price').value);
-      const w = parseFloat(document.getElementById('weight').value);
-      const out = document.getElementById('out');
+      const g = parseFloat(document.getElementById('weight').value);
+      const out = document.getElementById('output');
 
-      if (isNaN(p) || isNaN(w)) {
+      if (isNaN(p) || isNaN(g)) {
         out.style.display = 'block';
         out.textContent = 'Ingresá números válidos.';
         return;
       }
 
-      const r = calc(p, w);
+      const r = calc(p, g);
       out.style.display = 'block';
       out.innerHTML = `
         <span class="muted">Precio con impuestos (USD): ${fm(r.priceWithTax)}</span>
-        <span class="final">Precio final: USD ${fm(r.finalUSD)}</span>
-      `;
+        <span class="final">Precio final: USD ${fm(r.finalUSD)}</span>`;
     }
+  </script>
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXX');
   </script>
 </body>
 </html>
