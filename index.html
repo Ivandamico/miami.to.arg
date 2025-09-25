@@ -74,12 +74,15 @@
 <body>
   <div class="container">
     <h1>miami.to.arg<br>Calculá tu precio final</h1>
-    <input type="number" id="price" placeholder="Precio (USD)">
+    <input type="number" id="price" placeholder="Precio en USA (USD)">
     <input type="number" id="weight" placeholder="Peso (gramos)">
     <button onclick="calculate()">Calcular</button>
     <div id="output" class="output" style="display:none;"></div>
-    <small>Los precios se calculan sobre el precio total con 7% de impuestos.  
-    El margen depende del precio y si el pedido supera 1 kg.</small>
+    <small>
+      Los precios se calculan sobre el precio total con 7% de impuestos.<br>
+      El margen depende del precio y de si el pedido supera 1 kg.<br>
+      Si el precio es menor a 200 USD, se suma un fijo de 10 USD.
+    </small>
   </div>
 
   <script>
@@ -90,29 +93,24 @@
     function calc(price, grams) {
       const weightKg = grams / 1000;
       const priceWithTax = price * 1.07;
-      let finalUSD = 0;
+
+      let margin = 0;
+      let fijo = 0;
 
       if (price < 200) {
+        fijo = 10; // 🔹 fijo de $10 para ≤200
         if (price < 50) {
-          if (weightKg < 1) {
-            finalUSD = priceWithTax * 1.3;   // +30%
-          } else {
-            finalUSD = priceWithTax * 1.6;   // +60%
-          }
+          margin = (weightKg < 1) ? 0.30 : 0.60;
         } else {
-          if (weightKg < 1) {
-            finalUSD = priceWithTax * 1.2;   // +20%
-          } else {
-            finalUSD = priceWithTax * 1.5;   // +50%
-          }
+          margin = (weightKg < 1) ? 0.20 : 0.50;
         }
       } else {
-        if (weightKg < 1) {
-          finalUSD = priceWithTax * 1.15;   // +15%
-        } else {
-          finalUSD = priceWithTax * 1.3;    // +30%
-        }
+        fijo = 0;
+        margin = (weightKg < 1) ? 0.15 : 0.30;
       }
+
+      const subtotal = priceWithTax * (1 + margin);
+      const finalUSD = +(subtotal + fijo).toFixed(2);
 
       return {priceWithTax, finalUSD};
     }
@@ -132,7 +130,8 @@
       out.style.display = 'block';
       out.innerHTML = `
         <span class="muted">Precio con impuestos (USD): ${fm(r.priceWithTax)}</span>
-        <span class="final">Precio final: USD ${fm(r.finalUSD)}</span>`;
+        <span class="final">Precio final: USD ${fm(r.finalUSD)}</span>
+      `;
     }
   </script>
 
